@@ -1,0 +1,59 @@
+name: Build APK
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Build debug APK
+        run: |
+          chmod +x gradlew
+          ./gradlew assembleDebug --stacktrace --no-daemon 2>&1 | tee build.log
+
+      - name: Siapkan file APK
+        run: cp app/build/outputs/apk/debug/app-debug.apk FotoTeks.apk
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: FotoTeks-apk
+          path: FotoTeks.apk
+
+      - name: Publish ke Releases (tag "latest")
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release delete latest --cleanup-tag -y || true
+          gh release create latest FotoTeks.apk \
+            --target "${{ github.sha }}" \
+            --latest \
+            --title "Edit Teks Foto - build #${{ github.run_number }}" \
+            --notes "APK terbaru dari commit ${{ github.sha }}. Download file FotoTeks.apk lalu install di Android."
+
+      # Simpan log build ke branch ci-logs supaya mudah dibaca saat build gagal.
+      - name: Simpan log build
+        if: always()
+        run: |
+          cp build.log /tmp/build.log || echo "no log" > /tmp/build.log
+          git config user.name "github-actions"
+          git config user.email "actions@users.noreply.github.com"
+          git checkout --orphan ci-logs
+          git rm -rf . > /dev/null 2>&1 || true
+          cp /tmp/build.log ./build.log
+          git add build.log
+          git commit -m "build log run ${{ github.run_number }}"
+          git push -f origin ci-logs
