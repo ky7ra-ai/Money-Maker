@@ -34,7 +34,7 @@ for f in "${FAMILIES[@]}"; do
   for ttf in "$d"/*.ttf; do
     [ -f "$ttf" ] || continue
     size=$(stat -c%s "$ttf")
-    if [ "$size" -gt 1300000 ]; then echo "lewati (besar): $ttf"; continue; fi
+    if [ "$size" -gt 3500000 ]; then echo "lewati (besar): $ttf"; continue; fi
     # Normalisasi nama: OpenSans[wdth,wght].ttf -> OpenSans~wdth-wght.ttf
     name="$(basename "$ttf" | sed -E 's/\[(.*)\]/~\1/; s/,/-/g')"
     cp "$ttf" "$DEST/$name"

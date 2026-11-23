@@ -95,7 +95,7 @@ object Renderer {
         val origTc = floatArrayOf(Color.red(st.color).toFloat(), Color.green(st.color).toFloat(), Color.blue(st.color).toFloat())
         val ink = TextAnalyzer.analyzeInk(crop, bg, box, strip, origTc)
         val boxH = max(1, box[3] - box[1])
-        val dil = max(1, (0.05f * boxH + st.blurL * spec.kx * 1.2f).roundToInt())
+        val dil = max(2, (0.08f * boxH + st.blurL * spec.kx * 2f + 1.5f).roundToInt())
         val mask = TextAnalyzer.inkMask(ink, w, h, dil)
         val rnd = Random(line.id * 7919L + 13L)
         val filled = TextAnalyzer.harmonicFill(crop, bg, mask, st.noise, rnd)

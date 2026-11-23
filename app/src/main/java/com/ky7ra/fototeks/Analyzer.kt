@@ -597,6 +597,29 @@ object TextAnalyzer {
             )
         }
 
+        /**
+         * Warna teks dari piksel inti huruf: tempat bentuk hasil cocokan menutup penuh (>= 0.9) dan
+         * peta tinta asli juga yakin (>= 0.5). Tidak terpengaruh bila font belum tepat benar.
+         */
+        fun coreColor(f: Fit): FloatArray? {
+            renderMask(f.fb, f.p)
+            var n = 0
+            var sr = 0.0
+            var sg = 0.0
+            var sb = 0.0
+            for (y in 0 until rh) {
+                for (x in 0 until rw) {
+                    val i = y * rw + x
+                    if (mask[i] < 0.9f || aReg[i] < 0.5f) continue
+                    val ci = (ry0 + y) * c.w + rx0 + x
+                    if (!c.v[ci]) continue
+                    sr += c.r[ci]; sg += c.g[ci]; sb += c.b[ci]; n++
+                }
+            }
+            if (n < 6) return null
+            return floatArrayOf((sr / n).toFloat(), (sg / n).toFloat(), (sb / n).toFloat())
+        }
+
         fun release() = renderer.release()
     }
 
@@ -664,7 +687,7 @@ object TextAnalyzer {
                     val bh = fb.bb - fb.bt
                     val sx0 = if (bw > 1f && bh > 1f) (inkW / inkH) / (bw / bh) else 99f
                     Pair(fb, abs(ln(max(sx0, 0.01f))))
-                }.sortedBy { it.second }.take(14).map { it.first }
+                }.sortedBy { it.second }.take(60).map { it.first }
             }
 
             val fits = cand.map { fb ->
@@ -673,23 +696,25 @@ object TextAnalyzer {
             }.sortedBy { it.err }
 
             // Putaran 1: haluskan parameter pada kandidat terbaik.
-            val top = fits.take(3)
+            val top = fits.take(6)
             for (f in top) fitter.refine(f, 3)
             var best = top.minByOrNull { it.err }!!
 
             // Koreksi warna teks dengan kuadrat terkecil, hitung ulang peta tinta, lalu putaran 2.
-            val tc1 = fitter.lsColor(best)
-            var tcFinal = ink.tc
-            if (tc1 != null) {
-                val a2 = computeA(crop, bg, tc1, ink.sBg, ink.rx0, ink.ry0, ink.rx1, ink.ry1)
-                fitter.setA(a2)
-                for (f in top) {
-                    f.err = fitter.eval(f.fb, f.p)
-                    fitter.refine(f, 2)
-                }
-                best = top.minByOrNull { it.err }!!
-                tcFinal = fitter.lsColor(best) ?: tc1
+            fun pickColor(f: Fit, fallback: FloatArray): FloatArray =
+                fitter.coreColor(f)
+                    ?: (if (f.err < 0.35f) fitter.lsColor(f) else null)
+                    ?: fallback
+
+            val tc1 = pickColor(best, ink.tc)
+            val a2 = computeA(crop, bg, tc1, ink.sBg, ink.rx0, ink.ry0, ink.rx1, ink.ry1)
+            fitter.setA(a2)
+            for (f in top) {
+                f.err = fitter.eval(f.fb, f.p)
+                fitter.refine(f, 2)
             }
+            best = top.minByOrNull { it.err }!!
+            val tcFinal = pickColor(best, tc1)
 
             val scale = best.p[0] / 100f
             val sx = best.p[1]
