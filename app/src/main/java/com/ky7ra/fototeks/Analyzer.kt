@@ -289,7 +289,7 @@ object TextAnalyzer {
             }
             var dRef = 0
             if (tot > 0) {
-                val target = (tot * 0.985).toInt()
+                val target = (tot * 0.997).toInt()
                 var acc = 0
                 for (k in 0..765) {
                     acc += hist[k]
@@ -305,7 +305,7 @@ object TextAnalyzer {
             var tg = 0.0
             var tb = 0.0
             if (ok) {
-                val thr = 0.7f * dRef
+                val thr = 0.85f * dRef
                 for (y in by0 until by1) {
                     for (x in bx0 until bx1) {
                         val i = y * w + x

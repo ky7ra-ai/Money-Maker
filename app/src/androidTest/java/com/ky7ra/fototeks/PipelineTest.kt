@@ -110,7 +110,7 @@ class PipelineTest {
     fun scenes() {
         val faces = FontLibrary.all(ctx)
         report.appendLine("faces=${faces.size} labels=${faces.map { it.label }.distinct().size}")
-        report.appendLine("first labels: " + faces.map { it.label }.distinct().take(60).joinToString(" | "))
+        report.appendLine("families: " + faces.map { it.family }.distinct().sorted().joinToString(", "))
         try {
             for (s in buildScenes()) {
                 try {

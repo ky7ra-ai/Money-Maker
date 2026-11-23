@@ -72,7 +72,7 @@ jobs:
       - uses: gradle/actions/setup-gradle@v4
 
       - name: Unduh font terbuka
-        run: bash scripts/fetch-fonts.sh
+        run: bash scripts/fetch-fonts.sh 2>&1 | tee fonts.log
 
       - name: Aktifkan KVM
         run: |
@@ -96,5 +96,6 @@ jobs:
           mkdir -p /tmp/visual
           cp -r visual-out/. /tmp/visual/ 2>/dev/null || true
           cp visual.log /tmp/visual/ 2>/dev/null || true
+          cp fonts.log /tmp/visual/ 2>/dev/null || true
           [ -n "$(ls -A /tmp/visual)" ] || echo "tidak ada keluaran" > /tmp/visual/EMPTY.txt
           bash .github/scripts/push-logs.sh ci-visual /tmp/visual
