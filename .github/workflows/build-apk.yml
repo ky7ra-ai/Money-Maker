@@ -19,6 +19,9 @@ jobs:
           distribution: temurin
           java-version: "17"
 
+      - name: Unduh font terbuka
+        run: bash scripts/fetch-fonts.sh
+
       - name: Build debug APK
         run: |
           chmod +x gradlew
@@ -44,16 +47,50 @@ jobs:
             --title "Edit Teks Foto - build #${{ github.run_number }}" \
             --notes "APK terbaru dari commit ${{ github.sha }}. Download file FotoTeks.apk lalu install di Android."
 
-      # Simpan log build ke branch ci-logs supaya mudah dibaca saat build gagal.
       - name: Simpan log build
         if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
-          cp build.log /tmp/build.log || echo "no log" > /tmp/build.log
-          git config user.name "github-actions"
-          git config user.email "actions@users.noreply.github.com"
-          git checkout --orphan ci-logs
-          git rm -rf . > /dev/null 2>&1 || true
-          cp /tmp/build.log ./build.log
-          git add build.log
-          git commit -m "build log run ${{ github.run_number }}"
-          git push -f origin ci-logs
+          mkdir -p /tmp/buildlog
+          cp build.log /tmp/buildlog/build.log || echo "tidak ada log" > /tmp/buildlog/build.log
+          bash .github/scripts/push-logs.sh ci-logs /tmp/buildlog
+
+  visual-test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Unduh font terbuka
+        run: bash scripts/fetch-fonts.sh
+
+      - name: Aktifkan KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - name: Uji visual di emulator
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 33
+          arch: x86_64
+          disable-animations: true
+          script: bash .github/scripts/run-visual-test.sh
+
+      - name: Simpan hasil uji visual
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p /tmp/visual
+          cp -r visual-out/. /tmp/visual/ 2>/dev/null || true
+          cp visual.log /tmp/visual/ 2>/dev/null || true
+          [ -n "$(ls -A /tmp/visual)" ] || echo "tidak ada keluaran" > /tmp/visual/EMPTY.txt
+          bash .github/scripts/push-logs.sh ci-visual /tmp/visual

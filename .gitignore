@@ -9,3 +9,9 @@ captures/
 .cxx/
 *.apk
 *.aab
+
+# Font diunduh oleh scripts/fetch-fonts.sh
+app/src/main/assets/fonts/
+visual-out/
+visual.log
+build.log

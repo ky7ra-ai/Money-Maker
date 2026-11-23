@@ -9,9 +9,11 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -28,13 +30,13 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
-import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Slider
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
@@ -57,6 +59,7 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.IntSize
@@ -64,6 +67,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlin.math.min
+import kotlin.math.roundToInt
 
 @Composable
 fun EditorScreen(vm: EditorViewModel = viewModel()) {
@@ -108,7 +112,7 @@ fun EditorScreen(vm: EditorViewModel = viewModel()) {
                 val bmp = vm.preview
                 if (bmp == null) {
                     Text(
-                        "Pilih foto yang ada tulisannya.\nAplikasi akan membaca teksnya, lalu kamu bisa mengubahnya dengan keyboard.",
+                        "Pilih foto yang ada tulisannya.\nAplikasi akan membaca teksnya beserta fontnya, lalu kamu bisa mengubahnya dengan keyboard.",
                         textAlign = TextAlign.Center,
                         modifier = Modifier.padding(24.dp),
                         color = Color(0xFF555555),
@@ -121,7 +125,19 @@ fun EditorScreen(vm: EditorViewModel = viewModel()) {
                         onTapLine = { editing = it },
                     )
                 }
-                if (vm.busy) CircularProgressIndicator()
+                if (vm.busy) {
+                    Column(
+                        Modifier
+                            .clip(RoundedCornerShape(12.dp))
+                            .background(Color(0xCC000000))
+                            .padding(horizontal = 20.dp, vertical = 16.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                    ) {
+                        CircularProgressIndicator(color = Color.White)
+                        Spacer(Modifier.size(8.dp))
+                        Text(vm.busyText, color = Color.White, fontSize = 13.sp)
+                    }
+                }
             }
 
             Spacer(Modifier.size(8.dp))
@@ -157,10 +173,12 @@ fun EditorScreen(vm: EditorViewModel = viewModel()) {
     editing?.let { line ->
         EditDialog(
             line = line,
-            initial = vm.edits[line.id] ?: LineEdit(line.text, false, line.defaultAlign, null),
+            initial = vm.edits[line.id] ?: LineEdit(line.text, null, line.defaultAlign, null, 1f),
             canRevert = vm.edits.containsKey(line.id),
             onApply = { e ->
-                if (e.text == line.text && !e.bold && e.color == null) vm.revert(line.id) else vm.applyEdit(line.id, e)
+                val unchanged = e.text.trim() == line.text.trim() && e.faceId == null &&
+                    e.color == null && e.sizeScale == 1f
+                if (unchanged) vm.revert(line.id) else vm.applyEdit(line.id, e)
                 editing = null
             },
             onRevert = {
@@ -228,7 +246,7 @@ private fun ImageEditor(
             val ox = (box.width - bmp.width * s) / 2f
             val oy = (box.height - bmp.height * s) / 2f
             for (l in lines) {
-                val q = l.geo.quad(2f)
+                val q = l.geo.padded(2f)
                 val path = Path().apply {
                     moveTo(ox + q[0] * s, oy + q[1] * s)
                     lineTo(ox + q[2] * s, oy + q[3] * s)
@@ -250,11 +268,11 @@ private fun ImageEditor(
 @Composable
 private fun Choice(label: String, selected: Boolean, onClick: () -> Unit) {
     if (selected) {
-        FilledTonalButton(onClick = onClick, contentPadding = androidx.compose.foundation.layout.PaddingValues(horizontal = 12.dp)) {
+        FilledTonalButton(onClick = onClick, contentPadding = PaddingValues(horizontal = 12.dp)) {
             Text(label, fontSize = 13.sp)
         }
     } else {
-        OutlinedButton(onClick = onClick, contentPadding = androidx.compose.foundation.layout.PaddingValues(horizontal = 12.dp)) {
+        OutlinedButton(onClick = onClick, contentPadding = PaddingValues(horizontal = 12.dp)) {
             Text(label, fontSize = 13.sp)
         }
     }
@@ -279,13 +297,19 @@ private fun EditDialog(
     onDismiss: () -> Unit,
 ) {
     var text by remember(line.id) { mutableStateOf(initial.text) }
-    var bold by remember(line.id) { mutableStateOf(initial.bold) }
+    var faceId by remember(line.id) { mutableStateOf(initial.faceId) }
     var align by remember(line.id) { mutableStateOf(initial.align) }
     var color by remember(line.id) { mutableStateOf(initial.color) }
+    var sizeScale by remember(line.id) { mutableStateOf(initial.sizeScale) }
+    var showFonts by remember(line.id) { mutableStateOf(false) }
     val focus = remember { FocusRequester() }
     LaunchedEffect(line.id) { runCatching { focus.requestFocus() } }
 
+    val st = line.style
     val g = line.geo
+    val detected = FontLibrary.byId(st.faceId)
+    val currentFace = FontLibrary.byId(faceId ?: st.faceId)
+
     AlertDialog(
         onDismissRequest = onDismiss,
         title = { Text("Ubah teks") },
@@ -310,6 +334,11 @@ private fun EditDialog(
                     fontSize = 12.sp,
                     color = Color(0xFF555555),
                 )
+                Text(
+                    "Ketajaman tepi (blur) ${"%.1f".format(st.blurL)} px · noise ${"%.1f".format(st.noise)}",
+                    fontSize = 12.sp,
+                    color = Color(0xFF555555),
+                )
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text("Warna teks terdeteksi", fontSize = 12.sp, color = Color(0xFF555555))
                     Spacer(Modifier.width(6.dp))
@@ -320,16 +349,45 @@ private fun EditDialog(
                     Box(Modifier.size(16.dp).clip(CircleShape).background(Color(line.bgColor)).border(1.dp, Color.Gray, CircleShape))
                 }
 
+                Text("Font", fontWeight = FontWeight.Medium)
+                if (currentFace != null) {
+                    val fit = ((1f - st.error).coerceIn(0f, 1f) * 100).roundToInt()
+                    val info = if (faceId == null) {
+                        if (st.reliable) "Terdeteksi: ${currentFace.label} (kecocokan ±$fit%)"
+                        else "Font tidak terdeteksi pasti, dipakai ${currentFace.label}"
+                    } else {
+                        "Dipilih manual: ${currentFace.label}"
+                    }
+                    Text(info, fontSize = 12.sp, color = Color(0xFF555555))
+                    Text(
+                        text.ifBlank { line.text },
+                        fontFamily = FontFamily(currentFace.typeface),
+                        fontSize = 22.sp,
+                        maxLines = 1,
+                    )
+                }
+                val alts = st.alternatives.mapNotNull { FontLibrary.byId(it) }
+                if (alts.isNotEmpty()) {
+                    Row(
+                        Modifier.horizontalScroll(rememberScrollState()),
+                        horizontalArrangement = Arrangement.spacedBy(6.dp),
+                    ) {
+                        for (f in alts) {
+                            val selected = (faceId ?: st.faceId) == f.id
+                            Choice(f.label, selected) { faceId = if (f.id == detected?.id) null else f.id }
+                        }
+                    }
+                }
+                OutlinedButton(onClick = { showFonts = true }) { Text("Semua font…") }
+
+                Text("Ukuran: ${(sizeScale * 100).roundToInt()}%", fontWeight = FontWeight.Medium)
+                Slider(value = sizeScale, onValueChange = { sizeScale = it }, valueRange = 0.6f..1.6f)
+
                 Text("Rata teks", fontWeight = FontWeight.Medium)
                 Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                     Choice("Kiri", align == 0) { align = 0 }
                     Choice("Tengah", align == 1) { align = 1 }
                     Choice("Kanan", align == 2) { align = 2 }
-                }
-
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Checkbox(checked = bold, onCheckedChange = { bold = it })
-                    Text("Tebal (bold)")
                 }
 
                 Text("Warna", fontWeight = FontWeight.Medium)
@@ -344,11 +402,10 @@ private fun EditDialog(
                         if (c == null) {
                             Box(
                                 Modifier
-                                    .height32()
+                                    .size(width = 48.dp, height = 32.dp)
                                     .clip(RoundedCornerShape(16.dp))
                                     .border(bw, border, RoundedCornerShape(16.dp))
-                                    .clickable { color = null }
-                                    .padding(horizontal = 10.dp),
+                                    .clickable { color = null },
                                 contentAlignment = Alignment.Center,
                             ) { Text("Asli", fontSize = 12.sp) }
                         } else {
@@ -366,7 +423,7 @@ private fun EditDialog(
             }
         },
         confirmButton = {
-            TextButton(onClick = { onApply(LineEdit(text, bold, align, color)) }) { Text("Terapkan") }
+            TextButton(onClick = { onApply(LineEdit(text, faceId, align, color, sizeScale)) }) { Text("Terapkan") }
         },
         dismissButton = {
             Row {
@@ -375,9 +432,43 @@ private fun EditDialog(
             }
         },
     )
+
+    if (showFonts) {
+        FontPickerDialog(
+            sample = text.ifBlank { line.text },
+            onPick = {
+                faceId = if (it == detected?.id) null else it
+                showFonts = false
+            },
+            onDismiss = { showFonts = false },
+        )
+    }
 }
 
-private fun Modifier.height32(): Modifier = this.size(width = 48.dp, height = 32.dp)
+@Composable
+private fun FontPickerDialog(sample: String, onPick: (String) -> Unit, onDismiss: () -> Unit) {
+    val faces = FontLibrary.loaded()
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text("Pilih font (${faces.size})") },
+        text = {
+            LazyColumn(Modifier.heightIn(max = 460.dp)) {
+                items(faces, key = { it.id }) { f ->
+                    Column(
+                        Modifier
+                            .fillMaxWidth()
+                            .clickable { onPick(f.id) }
+                            .padding(vertical = 6.dp),
+                    ) {
+                        Text(f.label, fontSize = 11.sp, color = Color(0xFF555555))
+                        Text(sample, fontFamily = FontFamily(f.typeface), fontSize = 20.sp, maxLines = 1)
+                    }
+                }
+            }
+        },
+        confirmButton = { TextButton(onClick = onDismiss) { Text("Tutup") } },
+    )
+}
 
 @Composable
 private fun LinesDialog(
