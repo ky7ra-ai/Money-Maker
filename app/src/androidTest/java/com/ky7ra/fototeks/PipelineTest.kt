@@ -237,6 +237,14 @@ class PipelineTest {
             )
         }
 
+        // Diagnostik: seberapa kecil galat bila font yang benar dipaksakan?
+        for ((i, l) in lines.withIndex()) {
+            if (i >= s.lines.size) break
+            val tf = faces.firstOrNull { it.label.equals(s.lines[i].face, true) } ?: continue
+            val fs = TextAnalyzer.analyze(bmp, l.text, l.geo, faces, tf)
+            report.appendLine("   [$i] dipaksa font benar '${tf.label}': err=${"%.3f".format(fs.error)} (terpilih: ${"%.3f".format(l.style.error)})")
+        }
+
         val edits = HashMap<Int, LineEdit>()
         for ((i, l) in lines.withIndex()) {
             if (i < s.newTexts.size) edits[l.id] = LineEdit(s.newTexts[i], null, l.defaultAlign, null, 1f)

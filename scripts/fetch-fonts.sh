@@ -16,7 +16,14 @@ FAMILIES=(
   robotoslab barlow cabin titilliumweb mulish manrope bitter crimsontext ibmplexsans
   spacegrotesk jost outfit lexend sora archivo assistant heebo hind sourcecodepro bangers
   permanentmarker satisfy greatvibes
+  ptsans ptserif merriweathersans kanit prompt mukta oxygen exo2 fjallaone abrilfatface
+  archivonarrow alegreya alegreyasans cinzel cormorantgaramond ebgaramond teko signika vollkorn
+  zillaslab yanonekaffeesatz staatliches passionone righteous fredoka baloo2 chewy luckiestguy
+  pressstart2p specialelite courierprime spacemono inconsolata jetbrainsmono firacode overpass
+  hankengrotesk plusjakartasans bevietnampro figtree redhatdisplay syne epilogue albertsans
+  bricolagegrotesque
 )
+LICENSES=(ofl apache ufl)
 
 TMP="$(mktemp -d)"
 trap 'rm -rf "$TMP"' EXIT
@@ -24,13 +31,14 @@ trap 'rm -rf "$TMP"' EXIT
 git clone --quiet --depth 1 --filter=blob:none --sparse https://github.com/google/fonts.git "$TMP/gf"
 cd "$TMP/gf"
 ARGS=()
-for f in "${FAMILIES[@]}"; do ARGS+=("ofl/$f"); done
+for f in "${FAMILIES[@]}"; do for l in "${LICENSES[@]}"; do ARGS+=("$l/$f"); done; done
 git sparse-checkout set "${ARGS[@]}"
 
 COUNT=0
 for f in "${FAMILIES[@]}"; do
-  d="ofl/$f"
-  if [ ! -d "$d" ]; then echo "lewati (tidak ada): $f"; continue; fi
+  d=""
+  for l in "${LICENSES[@]}"; do [ -d "$l/$f" ] && d="$l/$f" && break; done
+  if [ -z "$d" ]; then echo "lewati (tidak ada): $f"; continue; fi
   for ttf in "$d"/*.ttf; do
     [ -f "$ttf" ] || continue
     size=$(stat -c%s "$ttf")
