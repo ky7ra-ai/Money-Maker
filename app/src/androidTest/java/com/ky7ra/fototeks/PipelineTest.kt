@@ -58,7 +58,7 @@ class PipelineTest {
         val newTexts: List<String>,
     )
 
-    private fun scenes(): List<Scene> = listOf(
+    private fun buildScenes(): List<Scene> = listOf(
         Scene(
             "poster", 1100, 620, 0xFF1B3A6B.toInt(), 0xFF6B2D8C.toInt(),
             listOf(
@@ -112,7 +112,7 @@ class PipelineTest {
         report.appendLine("faces=${faces.size} labels=${faces.map { it.label }.distinct().size}")
         report.appendLine("first labels: " + faces.map { it.label }.distinct().take(60).joinToString(" | "))
         try {
-            for (s in scenes()) {
+            for (s in buildScenes()) {
                 try {
                     runScene(s, faces)
                 } catch (e: Throwable) {
