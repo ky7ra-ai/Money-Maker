@@ -40,7 +40,7 @@ object Pipeline {
                 raws += RawLine(line, g)
             }
         }
-        val sem = Semaphore(4)
+        val sem = Semaphore(Runtime.getRuntime().availableProcessors().coerceIn(2, 6))
         raws.mapIndexed { idx, r ->
             async(Dispatchers.Default) {
                 sem.withPermit {

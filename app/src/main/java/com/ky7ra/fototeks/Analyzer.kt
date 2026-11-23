@@ -653,7 +653,7 @@ object TextAnalyzer {
     private fun run(src: Bitmap, text: String, geo: Geo, faces: List<FontFace>, forced: FontFace?): LineStyle {
         val t = text.trim()
         val pad = padFor(geo.h)
-        val ka = min(1f, 80f / geo.h).coerceAtLeast(0.2f)
+        val ka = min(1f, 56f / geo.h).coerceAtLeast(0.2f)
         val spec = CropSpec.make(geo, pad, pad, pad, pad, ka)
         val crop = buildCrop(src, spec)
         val box = spec.box()
@@ -687,7 +687,7 @@ object TextAnalyzer {
                     val bh = fb.bb - fb.bt
                     val sx0 = if (bw > 1f && bh > 1f) (inkW / inkH) / (bw / bh) else 99f
                     Pair(fb, abs(ln(max(sx0, 0.01f))))
-                }.sortedBy { it.second }.take(60).map { it.first }
+                }.sortedBy { it.second }.take(100).map { it.first }
             }
 
             val fits = cand.map { fb ->
@@ -698,9 +698,9 @@ object TextAnalyzer {
             // Putaran 1: haluskan parameter pada kandidat terbaik.
             // Tahap 2: setel posisi/ukuran 24 kandidat teratas satu putaran, agar font yang benar
             // tidak tersisih hanya karena posisi awalnya meleset 1-2 piksel.
-            val wide = fits.take(24)
+            val wide = fits.take(40)
             for (f in wide) fitter.refine(f, 1)
-            val top = wide.sortedBy { it.err }.take(6)
+            val top = wide.sortedBy { it.err }.take(8)
             for (f in top) fitter.refine(f, 3)
             var best = top.minByOrNull { it.err }!!
 
