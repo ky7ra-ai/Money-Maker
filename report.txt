@@ -1,0 +1,65 @@
+faces=1004 labels=1003
+families: Abril Fatface, Albert Sans, Alegreya, Alegreya Sans, Anton, Archivo, Archivo Black, Archivo Narrow, Arimo, Assistant, Baloo2, Bangers, Barlow, Be Vietnam Pro, Bebas Neue, Bitter, Bricolage Grotesque, Cabin, Caladea, Carlito, Casual Sistem, Caveat, Chewy, Cinzel, Comfortaa, Comic Neue, Cormorant Garamond, Courier Prime, Cousine, Crimson Text, DMSans, Dancing Script, EBGaramond, Epilogue, Exo2, Figtree, Fira Code, Fira Sans, Fjalla One, Fredoka, Gelasio, Great Vibes, Hanken Grotesk, Heebo, Hind, IBMPlex Sans, Inconsolata, Inter, Jet Brains Mono, Josefin Sans, Jost, Kanit, Karla, Lato, Lexend, Libre Baskerville, Lobster, Lora, Luckiest Guy, Manrope, Merriweather Sans, Mono Sistem, Montserrat, Mukta, Mulish, Nunito, Open Sans, Oswald, Outfit, Overpass, Oxygen, PT Sans, PT Serif, Pacifico, Passion One, Permanent Marker, Playfair Display, Plus Jakarta Sans, Poppins, Press Start2 P, Prompt, Quicksand, Raleway, Red Hat Display, Righteous, Roboto, Roboto Condensed, Roboto Mono, Roboto Slab, Rubik, Sans Sempit Sistem, Sans Sistem, Satisfy, Serif Sistem, Signika, Sora, Source Code Pro, Source Sans3, Space Grotesk, Space Mono, Special Elite, Staatliches, Syne, Teko, Tinos, Titillium Web, Tulisan Tangan Sistem, Ubuntu, Vollkorn, Work Sans, Yanone Kaffeesatz, Zilla Slab
+=== scene poster ===
+TRUTH: 'SALE 50% OFF' font='Montserrat Bold' size=84.0 color=#ffffffff rot=0.0
+TRUTH: 'Limited time only' font='Lato' size=44.0 color=#ffffffff rot=0.0
+TRUTH: 'Fresh Coffee Roasters' font='Playfair Display Bold' size=52.0 color=#ffffffff rot=0.0
+TRUTH: 'Open daily 8am - 9pm' font='Open Sans' size=36.0 color=#ffffe9a8 rot=0.0
+TRUTH: 'Special Offer' font='Pacifico' size=54.0 color=#ffffffff rot=-6.0
+analisis 5 baris: 3505 ms
+[0] 'SALE 50% OFF' box=627x60 angle=0.0 -> font='Montserrat Bold' err=0.072 reliable=true size=82.4 sx=1.02 blur=0.60 noise=0.99 color=#fffdfdfe bg=#ff393577 alt=[Montserrat Bold, Montserrat ExtraBold, Lexend SemiBold, Work Sans Bold, Albert Sans ExtraBold]
+[1] 'Limited time only' box=329x40 angle=0.0 -> font='Outfit Medium' err=0.525 reliable=true size=45.3 sx=0.98 blur=0.50 noise=0.66 color=#ffdbd9ea bg=#ff3b3478 alt=[Outfit Medium, IBMPlex Sans, Roboto Black, Outfit, Jost ExtraBold]
+[2] 'Fresh Coffee Roasters' box=514x40 angle=0.0 -> font='Playfair Display Bold' err=0.082 reliable=true size=51.5 sx=1.02 blur=0.70 noise=0.99 color=#fffefcff bg=#ff4b327e alt=[Playfair Display Bold, Playfair Display ExtraBold, Gelasio Medium, Gelasio Light, Gelasio]
+[3] 'Open daily 8am - 9pm' box=364x36 angle=0.0 -> font='Open Sans' err=0.117 reliable=true size=36.0 sx=1.00 blur=0.60 noise=0.99 color=#fff6e0b8 bg=#ff513181 alt=[Open Sans, Ubuntu, Epilogue, Source Sans3 SemiBold, Epilogue Light]
+[4] 'Special Offer' box=298x75 angle=-6.9 -> font='Pacifico' err=0.324 reliable=true size=53.1 sx=1.02 blur=0.40 noise=0.66 color=#fff3ecf7 bg=#ff6a2c8c alt=[Pacifico, Alegreya ExtraBold Italic, EBGaramond SemiBold Italic, Alegreya Bold Italic, Lobster]
+   [0] dipaksa font benar 'Montserrat Bold': err=0.072 (terpilih: 0.072)
+   [1] dipaksa font benar 'Lato': err=0.355 (terpilih: 0.525)
+   [2] dipaksa font benar 'Playfair Display Bold': err=0.082 (terpilih: 0.082)
+   [3] dipaksa font benar 'Open Sans': err=0.117 (terpilih: 0.117)
+   [4] dipaksa font benar 'Pacifico': err=0.324 (terpilih: 0.324)
+render 5 edit: 637 ms
+=== scene photo ===
+  (font 'Merriweather Bold' tidak ada, pakai pengganti)
+TRUTH: 'Welcome to Jakarta' font='Sans Sistem' size=56.0 color=#ff3b2a1a rot=0.0
+TRUTH: 'Best nasi goreng in town' font='Sans Sistem' size=38.0 color=#ff3b2a1a rot=0.0
+TRUTH: 'Call 0812 3456 7890' font='Roboto Mono' size=34.0 color=#ff3b2a1a rot=0.0
+TRUTH: 'Since 1998' font='Oswald Medium' size=64.0 color=#ff7a1f1f rot=0.0
+TRUTH: 'Family Restaurant' font='Lora Bold' size=46.0 color=#ff3b2a1a rot=4.0
+analisis 5 baris: 3229 ms
+[0] 'Welcome to Jakarta' box=494x42 angle=0.0 -> font='Sans Sistem Medium' err=0.287 reliable=true size=55.8 sx=1.02 blur=0.70 noise=3.32 color=#ff614f39 bg=#ffdccba9 alt=[Sans Sistem Medium, Heebo SemiBold, Heebo Medium, Heebo Bold, Sans Sistem Bold]
+[1] 'Best nasi goreng in town' box=410x39 angle=0.0 -> font='Barlow Medium' err=0.324 reliable=true size=38.5 sx=1.02 blur=0.80 noise=2.98 color=#ff5e4c33 bg=#ffdac7a3 alt=[Barlow Medium, Manrope Bold, Plus Jakarta Sans Medium, Hanken Grotesk SemiBold, Fredoka Medium]
+[2] 'Call 0812 3456 7890' box=378x27 angle=0.0 -> font='Roboto Mono' err=0.144 reliable=true size=34.2 sx=0.97 blur=0.80 noise=3.09 color=#ff4a381f bg=#ffd7c4a0 alt=[Roboto Mono, Roboto Mono Medium, Inconsolata Medium, Roboto Mono SemiBold, Inconsolata SemiBold]
+[3] 'Since 1998' box=269x54 angle=0.0 -> font='Oswald Medium' err=0.103 reliable=true size=63.6 sx=1.01 blur=0.90 noise=3.20 color=#ff7a2622 bg=#ffd4c19b alt=[Oswald Medium, Oswald Bold, Oswald ExtraBold, Oswald Black, Oswald SemiBold]
+[4] 'Family Restaurant' box=393x46 angle=3.2 -> font='Lora Bold' err=0.364 reliable=true size=45.7 sx=1.01 blur=1.00 noise=1.99 color=#ff4a3722 bg=#ffcab48b alt=[Lora Bold, Lora ExtraBold, Lora Black, Assistant Bold, PT Sans Bold]
+   [1] dipaksa font benar 'Sans Sistem': err=0.127 (terpilih: 0.324)
+   [2] dipaksa font benar 'Roboto Mono': err=0.144 (terpilih: 0.144)
+   [3] dipaksa font benar 'Oswald Medium': err=0.103 (terpilih: 0.103)
+   [4] dipaksa font benar 'Lora Bold': err=0.364 (terpilih: 0.364)
+render 5 edit: 178 ms
+=== scene receipt ===
+TRUTH: 'TOKO MAJU JAYA' font='Cousine Bold' size=40.0 color=#ff111111 rot=0.0
+TRUTH: 'Jl. Merdeka No. 12' font='Cousine' size=28.0 color=#ff111111 rot=0.0
+TRUTH: 'TOTAL   Rp 125.000' font='Cousine Bold' size=32.0 color=#ff111111 rot=0.0
+TRUTH: 'Terima kasih' font='Cousine' size=28.0 color=#ff111111 rot=0.0
+analisis 4 baris: 1806 ms
+[0] 'TOKO MAJU JAYA' box=335x35 angle=0.0 -> font='Cousine Bold' err=0.094 reliable=true size=40.9 sx=1.01 blur=0.70 noise=0.99 color=#ff1d1d1c bg=#fff4f5ef alt=[Cousine Bold, Source Code Pro Bold, Source Code Pro ExtraBold, Source Code Pro SemiBold, Source Code Pro Black]
+[1] 'Jl. Merdeka No. 12' box=295x27 angle=0.0 -> font='Cousine' err=0.214 reliable=true size=27.2 sx=1.05 blur=0.30 noise=0.99 color=#ff4a4b46 bg=#fff0f1ec alt=[Cousine, Source Code Pro, Source Code Pro Medium, Source Code Pro SemiBold, Mono Sistem Bold]
+[2] 'TOTAL Rp 125.000' box=337x29 angle=0.0 -> font='Work Sans Black' err=1.090 reliable=false size=36.6 sx=1.08 blur=0.70 noise=0.66 color=#ff3b3c37 bg=#fff3f4ee alt=[Work Sans Black, Montserrat Black Italic, Montserrat Black, Work Sans Bold, Archivo Black]
+[3] 'Terima kasih' box=201x21 angle=0.0 -> font='Cousine' err=0.189 reliable=true size=27.0 sx=1.05 blur=0.70 noise=1.33 color=#ff272723 bg=#fff3f4ee alt=[Cousine, Roboto Mono, Jet Brains Mono, Fira Code, Jet Brains Mono Light]
+   [0] dipaksa font benar 'Cousine Bold': err=0.094 (terpilih: 0.094)
+   [1] dipaksa font benar 'Cousine': err=0.214 (terpilih: 0.214)
+   [2] dipaksa font benar 'Cousine Bold': err=1.232 (terpilih: 1.090)
+   [3] dipaksa font benar 'Cousine': err=0.189 (terpilih: 0.189)
+render 4 edit: 67 ms
+=== scene dark ===
+TRUTH: 'NIGHT MARKET' font='Bebas Neue' size=96.0 color=#fff5f5f5 rot=0.0
+TRUTH: 'Open until midnight' font='Nunito' size=40.0 color=#ffdddddd rot=0.0
+TRUTH: 'Tickets Rp 50.000' font='Poppins Medium' size=38.0 color=#ffffc857 rot=0.0
+analisis 3 baris: 1801 ms
+[0] 'NIGHT MARKET' box=422x69 angle=0.0 -> font='Bebas Neue' err=0.045 reliable=true size=95.8 sx=1.01 blur=0.70 noise=1.99 color=#fff3f3f4 bg=#ff15202b alt=[Bebas Neue, Teko Medium, Teko SemiBold, Teko Bold, Teko ExtraBold]
+[1] 'Open until midnight' box=353x37 angle=0.0 -> font='Mulish SemiBold' err=0.296 reliable=true size=38.7 sx=1.01 blur=0.70 noise=1.99 color=#ffb8bdc1 bg=#ff18242f alt=[Mulish SemiBold, Open Sans Medium, Carlito Bold, Syne Light, Syne]
+[2] 'Tickets Rp 50.000' box=327x36 angle=0.0 -> font='Poppins Medium' err=0.230 reliable=true size=37.8 sx=1.01 blur=0.60 noise=1.99 color=#ffe6bb5e bg=#ff1a2733 alt=[Poppins Medium, Poppins SemiBold, Hind SemiBold, Titillium Web Bold, Roboto ExtraBold Italic]
+   [0] dipaksa font benar 'Bebas Neue': err=0.045 (terpilih: 0.045)
+   [1] dipaksa font benar 'Nunito': err=0.214 (terpilih: 0.296)
+   [2] dipaksa font benar 'Poppins Medium': err=0.230 (terpilih: 0.230)
+render 3 edit: 87 ms

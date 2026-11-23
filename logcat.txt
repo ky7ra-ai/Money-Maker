@@ -1,0 +1,14 @@
+--------- beginning of main
+11-23 20:25:45.693   358   358 D AndroidRuntime: >>>>>> START com.android.internal.os.ZygoteInit uid 0 <<<<<<
+11-23 20:25:45.700   358   358 I AndroidRuntime: Using default boot image
+11-23 20:25:45.700   358   358 I AndroidRuntime: Leaving lock profiling enabled
+11-23 20:25:57.458   836   836 I AndroidRuntime: VM exiting with result code 0, cleanup skipped.
+11-23 20:27:01.240  2298  2298 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-23 20:27:01.262  2298  2298 I AndroidRuntime: Using default boot image
+11-23 20:27:01.262  2298  2298 I AndroidRuntime: Leaving lock profiling enabled
+11-23 20:27:01.379  2298  2298 D AndroidRuntime: Calling main entry com.android.commands.am.Am
+11-23 20:27:01.638  2312  2327 I TestRunner: run started: 1 tests
+11-23 20:27:01.639  2312  2327 I TestRunner: started: scenes(com.ky7ra.fototeks.PipelineTest)
+11-23 20:27:34.965  2312  2327 I TestRunner: finished: scenes(com.ky7ra.fototeks.PipelineTest)
+11-23 20:27:34.966  2312  2327 I TestRunner: run finished: 1 tests, 0 failed, 0 ignored
+11-23 20:27:34.977  2298  2298 I AndroidRuntime: VM exiting with result code 0.
