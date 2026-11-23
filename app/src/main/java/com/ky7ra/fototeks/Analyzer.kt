@@ -696,14 +696,20 @@ object TextAnalyzer {
             }.sortedBy { it.err }
 
             // Putaran 1: haluskan parameter pada kandidat terbaik.
-            val top = fits.take(6)
+            // Tahap 2: setel posisi/ukuran 24 kandidat teratas satu putaran, agar font yang benar
+            // tidak tersisih hanya karena posisi awalnya meleset 1-2 piksel.
+            val wide = fits.take(24)
+            for (f in wide) fitter.refine(f, 1)
+            val top = wide.sortedBy { it.err }.take(6)
             for (f in top) fitter.refine(f, 3)
             var best = top.minByOrNull { it.err }!!
 
             // Koreksi warna teks dengan kuadrat terkecil, hitung ulang peta tinta, lalu putaran 2.
+            // Bila bentuk font sudah sangat cocok, kuadrat terkecil paling akurat; bila belum,
+            // pakai piksel inti huruf yang tidak bergantung pada ketepatan font.
             fun pickColor(f: Fit, fallback: FloatArray): FloatArray =
-                fitter.coreColor(f)
-                    ?: (if (f.err < 0.35f) fitter.lsColor(f) else null)
+                (if (f.err < 0.3f) fitter.lsColor(f) else null)
+                    ?: fitter.coreColor(f)
                     ?: fallback
 
             val tc1 = pickColor(best, ink.tc)
